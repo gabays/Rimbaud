@@ -1,0 +1,13 @@
+SuperStyl/
+env/
+.DS_Store
+*EDGES.csv
+R/stylo_config.txt
+R/table_with_frequencies.txt
+R/wordlist.txt
+R/.Rhistory
+R/corpus.bench.tok.list.freq.csv
+keep/
+R/Images
+.Rhistory
+dessins/
