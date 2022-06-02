@@ -9,7 +9,7 @@ The experiment we have conducted (with the help of J.-B. Camps) shows that this 
 Transcriptions come from _Wikisource_ and the _Gutenberg project_.
 
 The corpora are in the `train` and `unseen` repository.
-1. `train` contains the `unbalanced` (data gathered for the first experience, not all the authors have the same amount of words), `balanced` (all the authors have the same amount of words) and `max` (whenever possible, we have doubled the amount of words, but not for Rimbaud, whos corpus is too small) corpora.
+1. `train` contains the `unbalanced` (data gathered for the first experience, not all the authors have the same amount of words), `balanced` (all the authors have the same amount of words) and `max` (whenever possible, we have doubled the amount of words, but not for Rimbaud, whose corpus is too small) corpora.
 2. `unseen` contains the out-of-domain data (`attributed_poems`) and the _Illuminations_ (`debated_poems`)
 
 ## How to
