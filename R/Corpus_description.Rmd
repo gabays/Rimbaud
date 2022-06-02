@@ -1,0 +1,467 @@
+---
+title: "Inspect PCA"
+output:
+  html_document:
+    toc: yes
+    toc_float: true
+---
+
+# Preparation
+
+Set working directory
+
+```{r}
+setwd("~/GitHub/stylometrie/Rimbaud/R")
+getwd()
+```
+
+Load external functions
+
+```{r}
+source("R/functions.R")
+```
+
+Load libraries
+
+```{r}
+if(!require("stylo")){
+  install.packages("stylo")
+  library(stylo)
+}
+```
+
+# Corpus description
+
+## Training corpus
+
+### Balanced
+
+Load texts
+
+```{r, message=FALSE}
+corpus = list(
+  COP_PDivers<-paste(scan("../train/balanced/COP_PDivers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  COP_PModernes<-paste(scan("../train/balanced/COP_PModernes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  COP_Reliquaire<-paste(scan("../train/balanced/COP_Reliquaire.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  CROS_coffret_santal<-paste(scan("../train/balanced/CROS_coffret_santal.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  CROS_fleuve<-paste(scan("../train/balanced/CROS_fleuve.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  DIE_PePoesies<-paste(scan("../train/balanced/DIE_PePoesies.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  DIE_levres_closes<-paste(scan("../train/balanced/DIE_levres_closes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  NOUV_Humilis<-paste(scan("../train/balanced/NOUV_Humilis.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  NOUV_Valentines<-paste(scan("../train/balanced/NOUV_Valentines.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_appendice1<-paste(scan("../train/balanced/RIM_appendice1.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_premiers_vers<-paste(scan("../train/balanced/RIM_premiers_vers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_saison<-paste(scan("../train/balanced/RIM_saison.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_vers_nouveaux<-paste(scan("../train/balanced/RIM_vers_nouveaux.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_bonne_chanson<-paste(scan("../train/balanced/VER_bonne_chanson.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Fetes_galantes<-paste(scan("../train/balanced/VER_Fetes_galantes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_poemes_saturniens<-paste(scan("../train/balanced/VER_poemes_saturniens.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Romances_paroles<-paste(scan("../train/balanced/VER_Romances_paroles.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Sagesse<-paste(scan("../train/balanced/VER_Sagesse.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" ")
+)
+```
+
+Turn texts into minable data
+
+```{r, message=FALSE}
+#tokenisation
+corpus.tok = lapply(corpus, txt.to.words2)
+#Counting frequency of tokens
+corpus.tok.list = make.frequency.list(corpus.tok)
+#Transform frequency into a table
+corpus.tok.list.freq=make.table.of.frequencies(corpus.tok, corpus.tok.list, relative = F)
+#I name columns
+row.names(corpus.tok.list.freq)=c("COP_PDivers",
+                                        "COP_PModernes",
+                                        "COP_Reliquaire",
+                                        "CROS_coffret_santal",
+                                        "CROS_fleuve",
+                                        "DIE_PePoesies",
+                                        "DIE_levres_closes",
+                                        "NOUV_Humilis",
+                                        "NOUV_Valentines",
+                                        "RIM_appendice1",
+                                        "RIM_premiers_vers",
+                                        "RIM_saison",
+                                        "RIM_vers_nouveaux",
+                                        "VER_bonne_chanson",
+                                        "VER_Fetes_galantes",
+                                        "VER_poemes_saturniens",
+                                        "VER_Romances_paroles",
+                                        "VER_Sagesse"
+                                  )
+#I save a copy
+write.csv(corpus.tok.list.freq, file = "corpus.bench.tok.list.freq.csv",row.names=TRUE)
+#Convert table into dataframe
+corpus.tok.list.freq = as.data.frame(read.csv(file="corpus.bench.tok.list.freq.csv", sep = ",", header = TRUE, row.names=1, quote = '\"'))
+# I transpose
+corpus.tok.list.freq<-t(corpus.tok.list.freq)
+#Displaying the dataframe
+head(corpus.tok.list.freq)
+```
+
+Controlling distribution per author
+
+```{r}
+corpus.tok.list.freq_df<-as.data.frame(corpus.tok.list.freq)
+#group data / author
+RIMBAUD = as.numeric(sum(corpus.tok.list.freq[,grepl('RIM_', colnames(corpus.tok.list.freq))]))
+NOUVEAU = as.numeric(sum(corpus.tok.list.freq[,grepl('NOUV_', colnames(corpus.tok.list.freq))]))
+VERLAINE = as.numeric(sum(corpus.tok.list.freq[,grepl('VER_', colnames(corpus.tok.list.freq))]))
+COPPEE = as.numeric(sum(corpus.tok.list.freq[,grepl('COP_', colnames(corpus.tok.list.freq))]))
+CROS = as.numeric(sum(corpus.tok.list.freq[,grepl('CROS_', colnames(corpus.tok.list.freq))]))
+DIEX = as.numeric(sum(corpus.tok.list.freq[,grepl('DIEX_', colnames(corpus.tok.list.freq))]))
+#Drawing the graph
+y<-c(RIMBAUD,NOUVEAU,VERLAINE,COPPEE,CROS,DIEX)
+x<-c(1,2,3,4,5,6)
+df<-data.frame(x,y)
+plot(df$x,df$y, xaxt='n',main="Text length",xlab="",ylab="Number of tokens", col = c('darkred', 'darkblue', 'purple', 'darkgreen','darkorange','darkgrey'), pch = 18,cex=2)
+axis(side = 1, at = 1:6,labels=c('RIMBAUD','NOUVEAU','VERLAINE','COPPEE','CROS','DIEX'))
+```
+
+### Random
+
+Load texts
+
+```{r, message=FALSE}
+corpus = list(
+  COP_PDivers<-paste(scan("../train/little/COP_PDivers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  COP_PModernes<-paste(scan("../train/little/COP_PModernes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  COP_Reliquaire<-paste(scan("../train/little/COP_Reliquaire.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  CROS_coffret_santal<-paste(scan("../train/little/CROS_coffret_santal.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  DIE_PePoesies<-paste(scan("../train/little/DIE_PePoesies.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  NOUV_Humilis<-paste(scan("../train/little/NOUV_Humilis.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  NOUV_Valentines<-paste(scan("../train/little/NOUV_Valentines.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_appendice1<-paste(scan("../train/little/RIM_appendice1.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_premiers_vers<-paste(scan("../train/little/RIM_premiers_vers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_saison<-paste(scan("../train/little/RIM_saison.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_bonne_chanson<-paste(scan("../train/little/VER_bonne_chanson.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Fetes_galantes<-paste(scan("../train/little/VER_Fetes_galantes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_poemes_saturniens<-paste(scan("../train/little/VER_poemes_saturniens.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Romances_paroles<-paste(scan("../train/little/VER_Romances_paroles.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Sagesse<-paste(scan("../train/little/VER_Sagesse.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" ")
+)
+```
+
+Turn texts into minable data
+
+```{r, message=FALSE}
+#tokenisation
+corpus.tok = lapply(corpus, txt.to.words2)
+#Counting frequency of tokens
+corpus.tok.list = make.frequency.list(corpus.tok)
+#Transform frequency into a table
+corpus.tok.list.freq=make.table.of.frequencies(corpus.tok, corpus.tok.list, relative = F)
+#I name columns
+row.names(corpus.tok.list.freq)=c("COP_PDivers",
+                                        "COP_PModernes",
+                                        "COP_Reliquaire",
+                                        "CROS_coffret_santal",
+                                        "DIE_PePoesies",
+                                        "NOUV_Humilis",
+                                        "NOUV_Valentines",
+                                        "RIM_appendice1",
+                                        "RIM_premiers_vers",
+                                        "RIM_saison",
+                                        "VER_bonne_chanson",
+                                        "VER_Fetes_galantes",
+                                        "VER_poemes_saturniens",
+                                        "VER_Romances_paroles",
+                                        "VER_Sagesse"
+                                  )
+#I save a copy
+write.csv(corpus.tok.list.freq, file = "corpus.bench.tok.list.freq.csv",row.names=TRUE)
+#Convert table into dataframe
+corpus.tok.list.freq = as.data.frame(read.csv(file="corpus.bench.tok.list.freq.csv", sep = ",", header = TRUE, row.names=1, quote = '\"'))
+# I transpose
+corpus.tok.list.freq<-t(corpus.tok.list.freq)
+#Displaying the dataframe
+head(corpus.tok.list.freq)
+```
+
+Controlling distribution per author
+
+```{r}
+corpus.tok.list.freq_df<-as.data.frame(corpus.tok.list.freq)
+#group data / author
+RIMBAUD = as.numeric(sum(corpus.tok.list.freq[,grepl('RIM_', colnames(corpus.tok.list.freq))]))
+NOUVEAU = as.numeric(sum(corpus.tok.list.freq[,grepl('NOUV_', colnames(corpus.tok.list.freq))]))
+VERLAINE = as.numeric(sum(corpus.tok.list.freq[,grepl('VER_', colnames(corpus.tok.list.freq))]))
+COPPEE = as.numeric(sum(corpus.tok.list.freq[,grepl('COP_', colnames(corpus.tok.list.freq))]))
+CROS = sum(corpus.tok.list.freq_df$CROS_coffret_santal)
+CROS<-as.data.frame(CROS)
+rownames(CROS) <- "CROS_coffret_santal"
+CROS <-as.numeric(CROS)
+DIEX = sum(corpus.tok.list.freq_df$DIE_PePoesies)
+DIEX<-as.data.frame(DIEX)
+rownames(DIEX) <- "DIE_PePoesies"
+DIEX <-as.numeric(DIEX)
+#Drawing the graph
+y<-c(RIMBAUD,NOUVEAU,VERLAINE,COPPEE,CROS,DIEX)
+x<-c(1,2,3,4,5,6)
+df<-data.frame(x,y)
+plot(df$x,df$y, xaxt='n',main="Text length",xlab="",ylab="Number of tokens", col = c('darkred', 'darkblue', 'purple', 'darkgreen','darkorange','darkgrey'), pch = 18,cex=2)
+axis(side = 1, at = 1:6,labels=c('RIMBAUD','NOUVEAU','VERLAINE','COPPEE','CROS','DIEX'))
+```
+
+
+### Maximal
+
+Load texts
+
+```{r, message=FALSE}
+corpus = list(
+  COP_PDivers<-paste(scan("../train/max/COP_PDivers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  COP_PModernes<-paste(scan("../train/max/COP_PModernes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  COP_Reliquaire<-paste(scan("../train/max/COP_Reliquaire.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  COP_ecrit_siege<-paste(scan("../train/max/COP_ecrit_siege.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  COP_Humbles<-paste(scan("../train/max/COP_Humbles.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  CROS_coffret_santal<-paste(scan("../train/max/CROS_coffret_santal.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  CROS_fleuve<-paste(scan("../train/max/CROS_fleuve.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  DIE_PePoesies<-paste(scan("../train/max/DIE_PePoesies.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  DIE_levres_closes<-paste(scan("../train/max/DIE_levres_closes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  NOUV_Humilis<-paste(scan("../train/max/NOUV_Humilis.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  NOUV_Valentines<-paste(scan("../train/max/NOUV_Valentines.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_appendice1<-paste(scan("../train/max/RIM_appendice1.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_premiers_vers<-paste(scan("../train/max/RIM_premiers_vers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_saison<-paste(scan("../train/max/RIM_saison.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_bonne_chanson<-paste(scan("../train/max/VER_bonne_chanson.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Fetes_galantes<-paste(scan("../train/max/VER_Fetes_galantes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_poemes_saturniens<-paste(scan("../train/max/VER_poemes_saturniens.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_jadis_naguere<-paste(scan("../train/max/VER_jadis_naguere.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Romances_paroles<-paste(scan("../train/max/VER_Romances_paroles.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Sagesse<-paste(scan("../train/max/VER_Sagesse.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" ")
+)
+```
+
+Turn texts into minable data
+
+```{r, message=FALSE}
+#tokenisation
+corpus.tok = lapply(corpus, txt.to.words2)
+#Counting frequency of tokens
+corpus.tok.list = make.frequency.list(corpus.tok)
+#Transform frequency into a table
+corpus.tok.list.freq=make.table.of.frequencies(corpus.tok, corpus.tok.list, relative = F)
+#I name columns
+row.names(corpus.tok.list.freq)=c("COP_PDivers",
+                                        "COP_PModernes",
+                                        "COP_Reliquaire",
+                                        "COP_Humbles",
+                                        "COP_ecrit_siege",
+                                        "CROS_coffret_santal",
+                                        "CROS_fleuve",
+                                        "DIE_PePoesies",
+                                        "DIE_levres_closes",
+                                        "NOUV_Humilis",
+                                        "NOUV_Valentines",
+                                        "RIM_appendice1",
+                                        "RIM_premiers_vers",
+                                        "RIM_saison",
+                                        "VER_bonne_chanson",
+                                        "VER_Fetes_galantes",
+                                        "VER_poemes_saturniens",
+                                        "VER_Romances_paroles",
+                                        "VER_Sagesse",
+                                        "VER_jadis_naguere"
+                                  )
+#I save a copy
+write.csv(corpus.tok.list.freq, file = "corpus.bench.tok.list.freq.csv",row.names=TRUE)
+#Convert table into dataframe
+corpus.tok.list.freq = as.data.frame(read.csv(file="corpus.bench.tok.list.freq.csv", sep = ",", header = TRUE, row.names=1, quote = '\"'))
+# I transpose
+corpus.tok.list.freq<-t(corpus.tok.list.freq)
+#Displaying the dataframe
+head(corpus.tok.list.freq)
+```
+
+Controlling distribution per author
+
+```{r}
+corpus.tok.list.freq_df<-as.data.frame(corpus.tok.list.freq)
+#group data / author
+RIMBAUD = as.numeric(sum(corpus.tok.list.freq[,grepl('RIM_', colnames(corpus.tok.list.freq))]))
+NOUVEAU = as.numeric(sum(corpus.tok.list.freq[,grepl('NOUV_', colnames(corpus.tok.list.freq))]))
+VERLAINE = as.numeric(sum(corpus.tok.list.freq[,grepl('VER_', colnames(corpus.tok.list.freq))]))
+COPPEE = as.numeric(sum(corpus.tok.list.freq[,grepl('COP_', colnames(corpus.tok.list.freq))]))
+CROS = sum(corpus.tok.list.freq_df$CROS_coffret_santal)
+CROS<-as.data.frame(CROS)
+rownames(CROS) <- "CROS_coffret_santal"
+CROS <-as.numeric(CROS)
+DIEX = as.numeric(sum(corpus.tok.list.freq[,grepl('DIE_', colnames(corpus.tok.list.freq))]))
+#Drawing the graph
+y<-c(RIMBAUD,NOUVEAU,VERLAINE,COPPEE,CROS,DIEX)
+x<-c(1,2,3,4,5,6)
+df<-data.frame(x,y)
+plot(df$x,df$y, xaxt='n',main="Text length",xlab="",ylab="Number of tokens", col = c('darkred', 'darkblue', 'purple', 'darkgreen','darkorange','darkgrey'), pch = 18,cex=2)
+axis(side = 1, at = 1:6,labels=c('RIMBAUD','NOUVEAU','VERLAINE','COPPEE','CROS','DIEX'))
+```
+
+# Test corpus
+
+Load texts
+
+```{r, message=FALSE}
+corpus = list(
+  COP_cahier_rouge<-paste(scan("../unseen/attributed_poems/COP_cahier_rouge.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  CROS_collier_griffes<-paste(scan("../unseen/attributed_poems/CROS_collier_griffes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  CROS_vision_canal<-paste(scan("../unseen/attributed_poems/CROS_vision_canal.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  DIE_Amants<-paste(scan("../unseen/attributed_poems/DIE_Amants.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  DIE_paroles_vaincus<-paste(scan("../unseen/attributed_poems/DIE_paroles_vaincus.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  NOUV_Savoir_aimer<-paste(scan("../unseen/attributed_poems/NOUV_Savoir_aimer.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_appendice2_3<-paste(scan("../unseen/attributed_poems/RIM_appendice2-3.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_deserts<-paste(scan("../unseen/attributed_poems/RIM_deserts.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_poetes_fleurs<-paste(scan("../unseen/attributed_poems/RIM_poetes_fleurs.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_stupra<-paste(scan("../unseen/attributed_poems/RIM_stupra.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Amours<-paste(scan("../unseen/attributed_poems/VER_Amours.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" ")
+)
+```
+
+Turn texts into minable data
+
+```{r, message=FALSE}
+#tokenisation
+corpus.tok = lapply(corpus, txt.to.words2)
+#Counting frequency of tokens
+corpus.tok.list = make.frequency.list(corpus.tok)
+#Transform frequency into a table
+corpus.tok.list.freq=make.table.of.frequencies(corpus.tok, corpus.tok.list, relative = F)
+#I name columns
+row.names(corpus.tok.list.freq)=c("COP_cahier_rouge",
+                                        "CROS_collier_griffes",
+                                        "CROS_vision_canal",
+                                        "DIE_Amants",
+                                        "DIE_paroles_vaincus",
+                                        "NOUV_Savoir_aimer",
+                                        "RIM_appendice2_3",
+                                        "RIM_deserts",
+                                        "RIM_poetes_fleurs",
+                                        "RIM_stupra",
+                                        "VER_Amours"
+                                  )
+#I save a copy
+write.csv(corpus.tok.list.freq, file = "corpus.bench.tok.list.freq.csv",row.names=TRUE)
+#Convert table into dataframe
+corpus.tok.list.freq = as.data.frame(read.csv(file="corpus.bench.tok.list.freq.csv", sep = ",", header = TRUE, row.names=1, quote = '\"'))
+# I transpose
+corpus.tok.list.freq<-t(corpus.tok.list.freq)
+#Displaying the dataframe
+head(corpus.tok.list.freq)
+```
+
+```{r}
+corpus.tok.list.freq_df<-as.data.frame(corpus.tok.list.freq)
+#group data / author
+RIMBAUD = as.numeric(sum(corpus.tok.list.freq[,grepl('RIM_', colnames(corpus.tok.list.freq))]))
+NOUVEAU = sum(corpus.tok.list.freq_df$NOUV_Savoir_aimer)
+NOUVEAU<-as.data.frame(NOUVEAU)
+rownames(NOUVEAU) <- "NOUV_Savoir_aimer"
+NOUVEAU <-as.numeric(NOUVEAU)
+VERLAINE = sum(corpus.tok.list.freq_df$VER_Amours)
+VERLAINE<-as.data.frame(VERLAINE)
+rownames(VERLAINE) <- "VER_Amours"
+VERLAINE <-as.numeric(VERLAINE)
+COPPEE = sum(corpus.tok.list.freq_df$COP_cahier_rouge)
+COPPEE<-as.data.frame(COPPEE)
+rownames(COPPEE) <- "COP_cahier_rouge"
+COPPEE <-as.numeric(COPPEE)
+CROS = as.numeric(sum(corpus.tok.list.freq[,grepl('CROS_', colnames(corpus.tok.list.freq))]))
+DIEX = sum(corpus.tok.list.freq_df$DIE_Amants)
+DIEX<-as.data.frame(DIEX)
+rownames(DIEX) <- "DIE_Amants"
+DIEX <-as.numeric(DIEX)
+#Drawing the graph
+y<-c(RIMBAUD,NOUVEAU,VERLAINE,COPPEE,CROS,DIEX)
+x<-c(1,2,3,4,5,6)
+df<-data.frame(x,y)
+plot(df$x,df$y, xaxt='n',main="Text length",xlab="",ylab="Number of tokens", col = c('darkred', 'darkblue', 'purple', 'darkgreen','darkorange','darkgrey'), pch = 18,cex=2)
+axis(side = 1, at = 1:6,labels=c('RIMBAUD','NOUVEAU','VERLAINE','COPPEE','CROS','DIEX'))
+```
+
+
+# Analyse the PCA
+
+Load the data
+
+```{r}
+Rimbaud <- read.csv(file = '../SuperStyl/coefs_PCA.csv', row.names = NULL, header=TRUE)
+Rimbaud<-as.data.frame(Rimbaud)
+Rimbaud<-t(Rimbaud)
+Rimbaud<-as.data.frame(Rimbaud)
+names(Rimbaud) <- as.matrix(Rimbaud[1, ])
+Rimbaud <- Rimbaud[-1, ]
+Rimbaud[] <- lapply(Rimbaud, function(x) type.convert(as.character(x)))
+head(Rimbaud)
+```
+
+# Inspect
+
+## Nouveau
+
+### PC-3
+
+Notez:
+
+* le _e_ muet avec  _e_e_ et _e_a_
+* la conjonction/pronom relatif avec _\qu_ et _\qui_
+
+```{r}
+Rimbaud_custom <- Rimbaud[c('PC-3')]
+Rimbaud_custom$trigramm <- rownames(Rimbaud)
+Rimbaud_custom <- Rimbaud_custom[order(-Rimbaud_custom$`PC-3`),]
+head(Rimbaud_custom,20)
+```
+
+### PC-2
+
+Notez les marques du dialogisme avec _je\__ et _\_je_, _\_vo_ et _vou_, ou encore _me\__
+
+```{r}
+Rimbaud_custom <- Rimbaud[c('PC-2')]
+Rimbaud_custom$trigramm <- rownames(Rimbaud)
+Rimbaud_custom <- Rimbaud_custom[order(-Rimbaud_custom$`PC-2`),]
+head(Rimbaud_custom,20)
+```
+
+## Rimbaud
+
+### PC-6
+
+Notez:
+
+* l'absence de _e_ muet avec _e\_l_ et _e\_d_
+* l'absence d'interlocution avec _\_il_ et _il\__ (et sans-doute _it\__, morphème de la P3)
+* l'utilisation de l'article défini avec _\_la_ / _la\__ ou _le\__ / _\_le_
+
+```{r}
+Rimbaud_custom <- Rimbaud[c('PC-6')]
+Rimbaud_custom$trigramm <- rownames(Rimbaud)
+Rimbaud_custom <- Rimbaud_custom[order(-Rimbaud_custom$`PC-6`),]
+head(Rimbaud_custom,20)
+```
+
+Notez l'importance du pluriel: _es\__, _les_, _des_, _rs\__, _ts\__, _nt\__, _s\_e_, _s\_s_, _ent_, _s\_c_, _ux\__, _aux_, _urs_
+
+```{r}
+Rimbaud_custom <- Rimbaud[c('PC-1')]
+Rimbaud_custom$trigramm <- rownames(Rimbaud)
+Rimbaud_custom <- Rimbaud_custom[order(-Rimbaud_custom$`PC-1`),]
+head(Rimbaud_custom,20)
+```
+
+## Rimbaud et Nouveau
+
+### PC-4
+
+Notez:
+
+* L'importance du pluriel: _nt\__, _us\__, _ons_
+* L'interlocution au pluriel: _\ous_, _\nou_, _\vou_, _\_no_, _\_vo_
+* L'enfance: _nfa_, _ant_, _fan_, _enf_
+
+```{r}
+Rimbaud_custom <- Rimbaud[c('PC-4')]
+Rimbaud_custom$trigramm <- rownames(Rimbaud)
+Rimbaud_custom <- Rimbaud_custom[order(-Rimbaud_custom$`PC-4`),]
+head(Rimbaud_custom,20)
+```
