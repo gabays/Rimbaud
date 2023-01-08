@@ -18,13 +18,13 @@ The corpora are in the `train` and `unseen` repository.
 
 You need to install [SuperStyle](https://github.com/SupervisedStylometry/SuperStyl).
 
-With Python 3.8 (defaul installation)
+With Python 3.8 (default installation):
 
 ```console
 source install/310.sh
 ```
 
-With Python 3.10 (it happens if you have a mac):
+With Python 3.10:
 
 ```console
 source install/310.sh
@@ -75,7 +75,7 @@ source 4_rolling.sh
 
 ## 3. Cite
 
-Simon Gabay, _rien de Nouveau chez Rimbaud_, 2022, Github, https://github.com/gabays/Rimbaud
+Simon Gabay, _Rien de Nouveau chez Rimbaud_, 2022, Github, https://github.com/gabays/Rimbaud
 
 ## 4. Licence
 
