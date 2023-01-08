@@ -9,8 +9,8 @@ The experiment we have conducted shows that this hypothesis is wrong, and that R
 Transcriptions come from _Wikisource_ and the _Gutenberg project_.
 
 The corpora are in the `train` and `unseen` repository.
-1. `train` contains the `unbalanced` (data gathered for the first experience, not all the authors have the same amount of words), `balanced` (all the authors have the same amount of words) and `max` (whenever possible, we have doubled the amount of words, but not for Rimbaud, whose corpus is too small) corpora.
-2. `unseen` contains the out-of-domain data (`attributed_poems`) and the _Illuminations_ (`debated_poems`)
+1. [`train`](https://github.com/gabays/Rimbaud/tree/master/train) contains the `unbalanced` (data gathered for the first experience, not all the authors have the same amount of words), `balanced` (all the authors have the same amount of words) and `max` (whenever possible, we have doubled the amount of words, but not for Rimbaud, whose corpus is too small) corpora;
+2. [`unseen`](https://github.com/gabays/Rimbaud/tree/master/unseen) contains the out-of-domain data (`attributed_poems`) and the _Illuminations_ (`debated_poems`).
 
 ## 2. How to
 
@@ -21,13 +21,7 @@ You need to install [SuperStyle](https://github.com/SupervisedStylometry/SuperSt
 With Python 3.8 (default installation):
 
 ```console
-source install/310.sh
-```
-
-With Python 3.10:
-
-```console
-source install/310.sh
+source install/308.sh
 ```
 
 Or manually:
