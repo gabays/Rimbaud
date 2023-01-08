@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#activate venv if needed
-source env/bin/activate
 #move to directory
 cd SuperStyl
+#activate venv if needed
+source ../env/bin/activate
 rm -f 1a_balanced_benchmark_cross.log
 rm -f train.csv
 rm -f test.csv
@@ -83,19 +83,19 @@ for i in `seq 750 250 2500`; do
 	echo "--norms --cross_validate k-fold --k 10 --class_weights --balance downsampling --kernel linear"
 	echo "--norms --cross_validate k-fold --k 10 --class_weights --balance downsampling --kernel linear" >> 1a_balanced_benchmark_cross.log
 	#train model K-10
-	python3 train_svm.py train.csv --norms --cross_validate k-fold --k 10 --class_weights --balance downsampling  --kernel linear>> 1a_balanced_benchmark_cross.log
+	python3 train_svm.py train.csv --norms --cross_validate k-fold --k 10 --class_weights --balance downsampling --kernel linear>> 1a_balanced_benchmark_cross.log
 
 	#--norms --cross_validate k-fold --k 10 --class_weights --balance downsampling --kernel rbf
 	echo "--norms --cross_validate k-fold --k 10 --class_weights --balance downsampling --kernel rbf"
 	echo "--norms --cross_validate k-fold --k 10 --class_weights --balance downsampling --kernel rbf" >> 1a_balanced_benchmark_cross.log
 	#train model K-10
-	python3 train_svm.py train.csv --norms --cross_validate k-fold --k 10 --class_weights --balance downsampling  --kernel rbf>> 1a_balanced_benchmark_cross.log
+	python3 train_svm.py train.csv --norms --cross_validate k-fold --k 10 --class_weights --balance downsampling --kernel rbf>> 1a_balanced_benchmark_cross.log
 
 	#--norms --cross_validate k-fold --k 10 --class_weights --balance downsampling --kernel sigmoid
 	echo "--norms --cross_validate k-fold --k 10 --class_weights --balance downsampling --kernel sigmoid"
 	echo "--norms --cross_validate k-fold --k 10 --class_weights --balance downsampling --kernel sigmoid" >> 1a_balanced_benchmark_cross.log
 	#train model K-10
-	python3 train_svm.py train.csv --norms --cross_validate k-fold --k 10 --class_weights --balance downsampling  --kernel sigmoid>> 1a_balanced_benchmark_cross.log
+	python3 train_svm.py train.csv --norms --cross_validate k-fold --k 10 --class_weights --balance downsampling --kernel sigmoid>> 1a_balanced_benchmark_cross.log
 
 done
 

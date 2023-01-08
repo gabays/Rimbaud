@@ -2,7 +2,7 @@
 #title: Rolling Rimbaud
 
 #working directory
-setwd("~/GitHub/stylometrie/Rimbaud")
+setwd("~/DOcuments/github/Rimbaud_vers")
 
 # Load data
 dists = read.csv("SuperStyl/FINAL_PREDICTIONS.csv")

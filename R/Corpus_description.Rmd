@@ -11,7 +11,7 @@ output:
 Set working directory
 
 ```{r}
-setwd("~/GitHub/stylometrie/Rimbaud/R")
+setwd("~/Documents/github/Rimbaud_vers/R")
 getwd()
 ```
 
@@ -51,7 +51,6 @@ corpus = list(
   NOUV_Valentines<-paste(scan("../train/balanced/NOUV_Valentines.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
   RIM_appendice1<-paste(scan("../train/balanced/RIM_appendice1.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
   RIM_premiers_vers<-paste(scan("../train/balanced/RIM_premiers_vers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  RIM_saison<-paste(scan("../train/balanced/RIM_saison.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
   RIM_vers_nouveaux<-paste(scan("../train/balanced/RIM_vers_nouveaux.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
   VER_bonne_chanson<-paste(scan("../train/balanced/VER_bonne_chanson.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
   VER_Fetes_galantes<-paste(scan("../train/balanced/VER_Fetes_galantes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
@@ -82,7 +81,6 @@ row.names(corpus.tok.list.freq)=c("COP_PDivers",
                                         "NOUV_Valentines",
                                         "RIM_appendice1",
                                         "RIM_premiers_vers",
-                                        "RIM_saison",
                                         "RIM_vers_nouveaux",
                                         "VER_bonne_chanson",
                                         "VER_Fetes_galantes",
@@ -125,21 +123,20 @@ Load texts
 
 ```{r, message=FALSE}
 corpus = list(
-  COP_PDivers<-paste(scan("../train/little/COP_PDivers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  COP_PModernes<-paste(scan("../train/little/COP_PModernes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  COP_Reliquaire<-paste(scan("../train/little/COP_Reliquaire.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  CROS_coffret_santal<-paste(scan("../train/little/CROS_coffret_santal.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  DIE_PePoesies<-paste(scan("../train/little/DIE_PePoesies.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  NOUV_Humilis<-paste(scan("../train/little/NOUV_Humilis.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  NOUV_Valentines<-paste(scan("../train/little/NOUV_Valentines.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  RIM_appendice1<-paste(scan("../train/little/RIM_appendice1.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  RIM_premiers_vers<-paste(scan("../train/little/RIM_premiers_vers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  RIM_saison<-paste(scan("../train/little/RIM_saison.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  VER_bonne_chanson<-paste(scan("../train/little/VER_bonne_chanson.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  VER_Fetes_galantes<-paste(scan("../train/little/VER_Fetes_galantes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  VER_poemes_saturniens<-paste(scan("../train/little/VER_poemes_saturniens.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  VER_Romances_paroles<-paste(scan("../train/little/VER_Romances_paroles.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  VER_Sagesse<-paste(scan("../train/little/VER_Sagesse.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" ")
+  COP_PDivers<-paste(scan("../train/unbalanced/COP_PDivers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  COP_PModernes<-paste(scan("../train/unbalanced/COP_PModernes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  COP_Reliquaire<-paste(scan("../train/unbalanced/COP_Reliquaire.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  CROS_coffret_santal<-paste(scan("../train/unbalanced/CROS_coffret_santal.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  DIE_PePoesies<-paste(scan("../train/unbalanced/DIE_PePoesies.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  NOUV_Humilis<-paste(scan("../train/unbalanced/NOUV_Humilis.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  NOUV_Valentines<-paste(scan("../train/unbalanced/NOUV_Valentines.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_appendice1<-paste(scan("../train/unbalanced/RIM_appendice1.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  RIM_premiers_vers<-paste(scan("../train/unbalanced/RIM_premiers_vers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_bonne_chanson<-paste(scan("../train/unbalanced/VER_bonne_chanson.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Fetes_galantes<-paste(scan("../train/unbalanced/VER_Fetes_galantes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_poemes_saturniens<-paste(scan("../train/unbalanced/VER_poemes_saturniens.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Romances_paroles<-paste(scan("../train/unbalanced/VER_Romances_paroles.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
+  VER_Sagesse<-paste(scan("../train/unbalanced/VER_Sagesse.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" ")
 )
 ```
 
@@ -162,7 +159,6 @@ row.names(corpus.tok.list.freq)=c("COP_PDivers",
                                         "NOUV_Valentines",
                                         "RIM_appendice1",
                                         "RIM_premiers_vers",
-                                        "RIM_saison",
                                         "VER_bonne_chanson",
                                         "VER_Fetes_galantes",
                                         "VER_poemes_saturniens",
@@ -224,7 +220,6 @@ corpus = list(
   NOUV_Valentines<-paste(scan("../train/max/NOUV_Valentines.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
   RIM_appendice1<-paste(scan("../train/max/RIM_appendice1.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
   RIM_premiers_vers<-paste(scan("../train/max/RIM_premiers_vers.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
-  RIM_saison<-paste(scan("../train/max/RIM_saison.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
   VER_bonne_chanson<-paste(scan("../train/max/VER_bonne_chanson.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
   VER_Fetes_galantes<-paste(scan("../train/max/VER_Fetes_galantes.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
   VER_poemes_saturniens<-paste(scan("../train/max/VER_poemes_saturniens.txt", what="character", sep="", fileEncoding="UTF-8"),collapse=" "),
@@ -257,7 +252,6 @@ row.names(corpus.tok.list.freq)=c("COP_PDivers",
                                         "NOUV_Valentines",
                                         "RIM_appendice1",
                                         "RIM_premiers_vers",
-                                        "RIM_saison",
                                         "VER_bonne_chanson",
                                         "VER_Fetes_galantes",
                                         "VER_poemes_saturniens",

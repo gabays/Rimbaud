@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #activate venv if needed
-source env/bin/activate
+source ../env/bin/activate
 #move to directory
 cd SuperStyl
 rm -f 1d_max_benchmark_cross.log
